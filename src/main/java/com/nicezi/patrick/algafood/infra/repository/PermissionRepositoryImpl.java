@@ -5,10 +5,12 @@ import com.nicezi.patrick.algafood.domain.repository.PermissionRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Component
 public class PermissionRepositoryImpl implements PermissionRepository {
     @PersistenceContext
     private EntityManager manager;

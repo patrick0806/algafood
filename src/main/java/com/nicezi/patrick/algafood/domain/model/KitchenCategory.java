@@ -6,7 +6,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "kitchen_categories")
 public class KitchenCategory {
@@ -16,22 +20,4 @@ public class KitchenCategory {
 
     @Column
     private String name;
-
-    public Long getId() {
-        return id;
-    }
-
-    public KitchenCategory setId(Long id) {
-        this.id = id;
-        return this;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public KitchenCategory setName(String name) {
-        this.name = name;
-        return this;
-    }
 }

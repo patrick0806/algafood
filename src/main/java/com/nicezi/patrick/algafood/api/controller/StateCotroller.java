@@ -17,8 +17,8 @@ public class StateCotroller {
         this.stateRepository = stateRepository;
     }
 
-    // the procues is using when you can return more than one type of resposne
-    // like json and xml but with procudes you force return only json
+    // the produces is using when you can return more than one type of response
+    // like json and xml but with produces you force return only json
     // this property can stay in top of class
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<State> list(){

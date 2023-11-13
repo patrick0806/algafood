@@ -6,7 +6,10 @@ import com.nicezi.patrick.algafood.domain.model.KitchenCategory;
 import com.nicezi.patrick.algafood.domain.repository.KitchenCategoryRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class KitchenCategoryService {
@@ -14,6 +17,21 @@ public class KitchenCategoryService {
 
     KitchenCategoryService(KitchenCategoryRepository kitchenCategoryRepository){
         this.kitchenCategoryRepository = kitchenCategoryRepository;
+    }
+
+    public List<KitchenCategory> listAll(){
+        return this.kitchenCategoryRepository.list();
+    }
+
+    public KitchenCategory findById(Long kitchenCategoryId){
+        final var kitchenCategory = this.kitchenCategoryRepository.findById(kitchenCategoryId);
+
+        if(kitchenCategory == null){
+            throw new EntityNotFoundException(
+                    String.format("Não existe um cadastro de categoria de cozinha com o código %d", kitchenCategoryId)
+            );
+        };
+        return kitchenCategory;
     }
 
     public KitchenCategory save(KitchenCategory kitchenCategory){

@@ -24,30 +24,27 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/kitchen-categories")
 public class KitchenCategoryController {
-    final private KitchenCategoryRepository kitchenCategoryRepository;
     final private KitchenCategoryService kitchenCategoryService;
 
     KitchenCategoryController(KitchenCategoryRepository kitchenCategoryRepository, KitchenCategoryService kitchenCategoryService){
-        this.kitchenCategoryRepository = kitchenCategoryRepository;
         this.kitchenCategoryService = kitchenCategoryService;
     }
 
     @GetMapping
     public ResponseEntity<List<KitchenCategory>> list(){
-        final var kitchens = this.kitchenCategoryRepository.list();
+        final var kitchens = this.kitchenCategoryService.listAll();
 
         return ResponseEntity.ok(kitchens);
     }
 
     @GetMapping("/{kitchenCategoryId}")
     public ResponseEntity<KitchenCategory> findById(@PathVariable Long kitchenCategoryId){
-        final var kitchenCategory = this.kitchenCategoryRepository.findById(kitchenCategoryId);
-
-        if(kitchenCategory == null){
-            return ResponseEntity.notFound().build();
-        };
-
-        return ResponseEntity.ok(kitchenCategory);
+       try{
+           final var kitchenCategory = this.kitchenCategoryService.findById(kitchenCategoryId);
+           return ResponseEntity.ok(kitchenCategory);
+       }catch(EntityNotFoundException ex){
+           return ResponseEntity.notFound().build();
+       }
     }
 
     @PostMapping
@@ -61,23 +58,23 @@ public class KitchenCategoryController {
     public ResponseEntity<KitchenCategory> updateKitchenCategory(
             @PathVariable Long kitchenCategoryId,
             @RequestBody  KitchenCategory kitchenCategory){
-        final var currentKitchenCategory = this.kitchenCategoryRepository.findById(kitchenCategoryId);
+        try{
+            final var currentKitchenCategory = this.kitchenCategoryService.findById(kitchenCategoryId);
 
-        if(currentKitchenCategory == null){
+            BeanUtils.copyProperties(kitchenCategory, currentKitchenCategory, "id");
+
+            final var savedKitchenCategory = this.kitchenCategoryService.save(currentKitchenCategory);
+
+            return ResponseEntity.ok(savedKitchenCategory);
+        }catch (EntityNotFoundException ex){
             return ResponseEntity.notFound().build();
         }
-
-        BeanUtils.copyProperties(kitchenCategory, currentKitchenCategory,"id");
-
-        final var savedKitchenCategory = this.kitchenCategoryRepository.save(currentKitchenCategory);
-
-        return ResponseEntity.ok(savedKitchenCategory);
     }
 
     @DeleteMapping("/{kitchenCategoryId}")
     public ResponseEntity<KitchenCategory> deleteKitchenCategory(@PathVariable Long kitchenCategoryId){
         try{
-            this.kitchenCategoryRepository.remove(kitchenCategoryId);
+            this.kitchenCategoryService.remove(kitchenCategoryId);
             return ResponseEntity.noContent().build();
         }
         catch (EntityNotFoundException ex){

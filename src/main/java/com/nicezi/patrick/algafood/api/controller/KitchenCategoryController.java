@@ -3,6 +3,7 @@ package com.nicezi.patrick.algafood.api.controller;
 
 import com.nicezi.patrick.algafood.domain.model.KitchenCategory;
 import com.nicezi.patrick.algafood.domain.repository.KitchenCategoryRepository;
+import com.nicezi.patrick.algafood.domain.service.CreateKitchenCategoryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -21,10 +22,12 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/kitchen-categories")
 public class KitchenCategoryController {
-    private KitchenCategoryRepository kitchenCategoryRepository;
+    final private KitchenCategoryRepository kitchenCategoryRepository;
+    final private CreateKitchenCategoryService createKitchenCategoryService;
 
-    KitchenCategoryController(KitchenCategoryRepository kitchenCategoryRepository){
+    KitchenCategoryController(KitchenCategoryRepository kitchenCategoryRepository, CreateKitchenCategoryService createKitchenCategoryService){
         this.kitchenCategoryRepository = kitchenCategoryRepository;
+        this.createKitchenCategoryService = createKitchenCategoryService;
     }
 
     @GetMapping
@@ -47,7 +50,7 @@ public class KitchenCategoryController {
 
     @PostMapping
     public ResponseEntity<KitchenCategory> createKitchenCategory(@RequestBody  KitchenCategory kitchenCategory){
-        final var savedKitchenCategory = this.kitchenCategoryRepository.save(kitchenCategory);
+        final var savedKitchenCategory = this.createKitchenCategoryService.execute(kitchenCategory);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedKitchenCategory);
     }

@@ -1,9 +1,11 @@
 package com.nicezi.patrick.algafood.api.controller;
 
 
+import com.nicezi.patrick.algafood.domain.exception.EntityInUseException;
+import com.nicezi.patrick.algafood.domain.exception.EntityNotFoundException;
 import com.nicezi.patrick.algafood.domain.model.KitchenCategory;
 import com.nicezi.patrick.algafood.domain.repository.KitchenCategoryRepository;
-import com.nicezi.patrick.algafood.domain.service.CreateKitchenCategoryService;
+import com.nicezi.patrick.algafood.domain.service.KitchenCategoryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -23,11 +25,11 @@ import java.util.List;
 @RequestMapping(path = "/kitchen-categories")
 public class KitchenCategoryController {
     final private KitchenCategoryRepository kitchenCategoryRepository;
-    final private CreateKitchenCategoryService createKitchenCategoryService;
+    final private KitchenCategoryService kitchenCategoryService;
 
-    KitchenCategoryController(KitchenCategoryRepository kitchenCategoryRepository, CreateKitchenCategoryService createKitchenCategoryService){
+    KitchenCategoryController(KitchenCategoryRepository kitchenCategoryRepository, KitchenCategoryService kitchenCategoryService){
         this.kitchenCategoryRepository = kitchenCategoryRepository;
-        this.createKitchenCategoryService = createKitchenCategoryService;
+        this.kitchenCategoryService = kitchenCategoryService;
     }
 
     @GetMapping
@@ -50,7 +52,7 @@ public class KitchenCategoryController {
 
     @PostMapping
     public ResponseEntity<KitchenCategory> createKitchenCategory(@RequestBody  KitchenCategory kitchenCategory){
-        final var savedKitchenCategory = this.createKitchenCategoryService.execute(kitchenCategory);
+        final var savedKitchenCategory = this.kitchenCategoryService.save(kitchenCategory);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedKitchenCategory);
     }
@@ -75,15 +77,13 @@ public class KitchenCategoryController {
     @DeleteMapping("/{kitchenCategoryId}")
     public ResponseEntity<KitchenCategory> deleteKitchenCategory(@PathVariable Long kitchenCategoryId){
         try{
-            KitchenCategory currentKitchenCategory = this.kitchenCategoryRepository.findById(kitchenCategoryId);
-
-            if(currentKitchenCategory == null){
-                return ResponseEntity.notFound().build();
-            }
-
             this.kitchenCategoryRepository.remove(kitchenCategoryId);
             return ResponseEntity.noContent().build();
-        } catch (DataIntegrityViolationException ex){
+        }
+        catch (EntityNotFoundException ex){
+            return ResponseEntity.notFound().build();
+        }
+        catch (EntityInUseException ex){
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }

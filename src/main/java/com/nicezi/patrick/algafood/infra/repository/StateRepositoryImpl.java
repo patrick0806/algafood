@@ -5,6 +5,7 @@ import com.nicezi.patrick.algafood.domain.repository.StateRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +37,11 @@ public class StateRepositoryImpl implements StateRepository {
     @Transactional
     public void remove(Long id) {
         final var manegedEntity = manager.find(State.class,id);
+
+        if(manegedEntity == null){
+            throw new EmptyResultDataAccessException(1);
+        }
+
         manager.remove(manegedEntity);
     }
 }

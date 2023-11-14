@@ -1,11 +1,13 @@
 package com.nicezi.patrick.algafood.api.controller;
 
+import com.nicezi.patrick.algafood.domain.exception.EntityInUseException;
 import com.nicezi.patrick.algafood.domain.exception.EntityNotFoundException;
 import com.nicezi.patrick.algafood.domain.model.Restaurant;
 import com.nicezi.patrick.algafood.domain.service.RestaurantService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -63,5 +65,19 @@ public class RestaurantController {
        }catch (EntityNotFoundException ex){
            return ResponseEntity.notFound().build();
        }
+    }
+
+    @DeleteMapping("/{restaurantId}")
+    public ResponseEntity<Restaurant> deleteRestaurant(@PathVariable Long restaurantId){
+        try{
+            this.restaurantService.remove(restaurantId);
+            return ResponseEntity.noContent().build();
+        }
+        catch (EntityNotFoundException ex){
+            return ResponseEntity.notFound().build();
+        }
+        catch (EntityInUseException ex){
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
     }
 }

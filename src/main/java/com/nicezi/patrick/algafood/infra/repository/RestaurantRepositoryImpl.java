@@ -1,11 +1,13 @@
 package com.nicezi.patrick.algafood.infra.repository;
 
 
+import com.nicezi.patrick.algafood.domain.model.KitchenCategory;
 import com.nicezi.patrick.algafood.domain.model.Restaurant;
 import com.nicezi.patrick.algafood.domain.repository.RestaurantRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +39,12 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
     @Override
     @Transactional
     public void remove(Long id) {
-        final var manegedEntity = manager.find(Restaurant.class,id);
+        final var manegedEntity = manager.find(KitchenCategory.class,id);
+
+        if(manegedEntity == null){
+            throw new EmptyResultDataAccessException(1);
+        }
+
         manager.remove(manegedEntity);
     }
 }

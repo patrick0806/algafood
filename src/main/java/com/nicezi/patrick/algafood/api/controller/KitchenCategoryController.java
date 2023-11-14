@@ -4,10 +4,8 @@ package com.nicezi.patrick.algafood.api.controller;
 import com.nicezi.patrick.algafood.domain.exception.EntityInUseException;
 import com.nicezi.patrick.algafood.domain.exception.EntityNotFoundException;
 import com.nicezi.patrick.algafood.domain.model.KitchenCategory;
-import com.nicezi.patrick.algafood.domain.repository.KitchenCategoryRepository;
 import com.nicezi.patrick.algafood.domain.service.KitchenCategoryService;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,7 +24,7 @@ import java.util.List;
 public class KitchenCategoryController {
     final private KitchenCategoryService kitchenCategoryService;
 
-    KitchenCategoryController(KitchenCategoryRepository kitchenCategoryRepository, KitchenCategoryService kitchenCategoryService){
+    KitchenCategoryController(KitchenCategoryService kitchenCategoryService){
         this.kitchenCategoryService = kitchenCategoryService;
     }
 

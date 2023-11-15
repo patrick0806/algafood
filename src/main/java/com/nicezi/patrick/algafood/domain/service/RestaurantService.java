@@ -41,13 +41,9 @@ public class RestaurantService {
 
     public Restaurant save(Restaurant restaurant){
         final var gastronomyStyleId = restaurant.getGastronomyStyle().getId();
-        GastronomyStyle gastronomyStyle = this.gastronomyStyleRepository.findById(gastronomyStyleId);
-
-        if(gastronomyStyle == null){
-            throw  new EntityNotFoundException(
-                    String.format("Não existe cadastro de cozinha com o código %d",gastronomyStyleId)
-            );
-        }
+        this.gastronomyStyleRepository.findById(gastronomyStyleId)
+                .orElseThrow(() -> new EntityNotFoundException(String
+                                .format("Não existe cadastro de cozinha com o código %d",gastronomyStyleId)));
 
         return this.restaurantRepository.save(restaurant);
     }

@@ -19,18 +19,14 @@ public class GastronomyStyleService {
     }
 
     public List<GastronomyStyle> listAll(){
-        return this.gastronomyStyleRepository.list();
+        return this.gastronomyStyleRepository.findAll();
     }
 
     public GastronomyStyle findById(Long gastronomyStyleId){
-        final var gastronomyStyle = this.gastronomyStyleRepository.findById(gastronomyStyleId);
-
-        if(gastronomyStyle == null){
-            throw new EntityNotFoundException(
-                    String.format("Não existe um cadastro de categoria de cozinha com o código %d", gastronomyStyleId)
-            );
-        };
-        return gastronomyStyle;
+        return this.gastronomyStyleRepository.findById(gastronomyStyleId)
+                .orElseThrow(() ->new EntityNotFoundException(
+                        String.format("Não existe um cadastro de categoria de cozinha com o código %d", gastronomyStyleId)
+                ) );
     }
 
     public GastronomyStyle save(GastronomyStyle gastronomyStyle){
@@ -39,7 +35,7 @@ public class GastronomyStyleService {
 
     public void remove(Long id){
         try{
-            this.gastronomyStyleRepository.remove(id);
+            this.gastronomyStyleRepository.deleteById(id);
         }
         catch (EmptyResultDataAccessException ex){
             throw new EntityNotFoundException(

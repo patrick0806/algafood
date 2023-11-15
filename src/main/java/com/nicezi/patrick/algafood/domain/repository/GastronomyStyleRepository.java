@@ -1,12 +1,12 @@
 package com.nicezi.patrick.algafood.domain.repository;
 
 import com.nicezi.patrick.algafood.domain.model.GastronomyStyle;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-public interface GastronomyStyleRepository {
-    List<GastronomyStyle> list();
-    GastronomyStyle findById(Long id);
-    GastronomyStyle save(GastronomyStyle gastronomyStyle);
-    void remove(Long id);
+@Repository
+public interface GastronomyStyleRepository extends JpaRepository<GastronomyStyle, Long> {
+
 }

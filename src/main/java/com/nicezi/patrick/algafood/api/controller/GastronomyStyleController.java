@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/kitchen-categories")
+@RequestMapping(path = "/gastronomy-styles")
 public class GastronomyStyleController {
     final private GastronomyStyleService gastronomyStyleService;
 
@@ -30,9 +30,9 @@ public class GastronomyStyleController {
 
     @GetMapping
     public ResponseEntity<List<GastronomyStyle>> list(){
-        final var kitchens = this.gastronomyStyleService.listAll();
+        final var gastronomyStyles = this.gastronomyStyleService.listAll();
 
-        return ResponseEntity.ok(kitchens);
+        return ResponseEntity.ok(gastronomyStyles);
     }
 
     @GetMapping("/{gastronomyStyleId}")

@@ -1,12 +1,8 @@
 package com.nicezi.patrick.algafood.domain.repository;
 
 import com.nicezi.patrick.algafood.domain.model.PaymentMethod;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface PaymentMethodRepository {
-    List<PaymentMethod> list();
-    PaymentMethod findById(Long id);
-    PaymentMethod save(PaymentMethod city);
-    void remove(Long id);
-}
+public interface PaymentMethodRepository extends JpaRepository<PaymentMethod, Long> {}

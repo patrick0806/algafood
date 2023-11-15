@@ -2,7 +2,6 @@ package com.nicezi.patrick.algafood.domain.service;
 
 import com.nicezi.patrick.algafood.domain.exception.EntityInUseException;
 import com.nicezi.patrick.algafood.domain.exception.EntityNotFoundException;
-import com.nicezi.patrick.algafood.domain.model.GastronomyStyle;
 import com.nicezi.patrick.algafood.domain.model.Restaurant;
 import com.nicezi.patrick.algafood.domain.repository.GastronomyStyleRepository;
 import com.nicezi.patrick.algafood.domain.repository.RestaurantRepository;
@@ -24,17 +23,14 @@ public class RestaurantService {
     }
 
     public List<Restaurant> listAll(){
-        return this.restaurantRepository.list();
+        return this.restaurantRepository.findAll();
     }
 
     public Restaurant findById(Long id){
-        final var restaurant = this.restaurantRepository.findById(id);
-
-        if(restaurant == null){
-            throw new EntityNotFoundException(
-                    String.format("Não existe um cadastro de restaurante com o código %d", id)
-            );
-        }
+        final var restaurant = this.restaurantRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Não existe um cadastro de restaurante com o código %d", id)
+                ));;
 
         return restaurant;
     }
@@ -50,7 +46,7 @@ public class RestaurantService {
 
     public void remove(Long id){
         try{
-            this.restaurantRepository.remove(id);
+            this.restaurantRepository.deleteById(id);
         }
         catch (EmptyResultDataAccessException ex){
             throw new EntityNotFoundException(

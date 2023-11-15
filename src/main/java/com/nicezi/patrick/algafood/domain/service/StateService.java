@@ -19,17 +19,15 @@ public class StateService {
     }
 
     public List<State> listAll(){
-        return this.stateRepository.list();
+        return this.stateRepository.findAll();
     }
 
     public State findById(Long stateId){
-        final var state = this.stateRepository.findById(stateId);
+        final var state = this.stateRepository.findById(stateId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Não existe um cadastro de estado com o código %d", stateId)
+                ));;
 
-        if(state == null){
-            throw new EntityNotFoundException(
-                    String.format("Não existe um cadastro de categoria de cozinha com o código %d", stateId)
-            );
-        };
         return state;
     }
 
@@ -39,7 +37,7 @@ public class StateService {
 
     public void remove(Long id){
         try{
-            this.stateRepository.remove(id);
+            this.stateRepository.deleteById(id);
         }
         catch (EmptyResultDataAccessException ex){
             throw new EntityNotFoundException(

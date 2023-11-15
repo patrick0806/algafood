@@ -1,12 +1,8 @@
 package com.nicezi.patrick.algafood.domain.repository;
 
 import com.nicezi.patrick.algafood.domain.model.State;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface StateRepository {
-    List<State> list();
-    State findById(Long id);
-    State save(State city);
-    void remove(Long id);
-}
+public interface StateRepository extends JpaRepository<State, Long> {}

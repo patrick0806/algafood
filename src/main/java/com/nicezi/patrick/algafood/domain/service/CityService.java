@@ -38,7 +38,7 @@ public class CityService {
         final var stateId = city.getState().getId();
         this.stateRepository.findById(stateId)
                 .orElseThrow(() -> new EntityNotFoundException(
-                String.format("Não existe um cadastro de cidade com o código %d", stateId)));;
+                String.format("Não existe um cadastro de cidade com o código %d", stateId)));
 
         return this.cityRepository.save(city);
     }

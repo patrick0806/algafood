@@ -30,7 +30,7 @@ public class RestaurantService {
         final var restaurant = this.restaurantRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Não existe um cadastro de restaurante com o código %d", id)
-                ));;
+                ));
 
         return restaurant;
     }

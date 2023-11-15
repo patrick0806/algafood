@@ -26,7 +26,7 @@ public class StateService {
         final var state = this.stateRepository.findById(stateId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Não existe um cadastro de estado com o código %d", stateId)
-                ));;
+                ));
 
         return state;
     }

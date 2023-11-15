@@ -5,12 +5,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -28,4 +33,12 @@ public class Restaurant {
 
     @ManyToOne
     private GastronomyStyle gastronomyStyle;
+
+    @ManyToMany
+    @JoinTable(
+            name="restaurant_payment_methods",
+            joinColumns = @JoinColumn(name = "restaurant_id"),
+            inverseJoinColumns = @JoinColumn(name="payment_method_id")
+    )
+    private List<PaymentMethod> paymentMethods = new ArrayList<>();
 }

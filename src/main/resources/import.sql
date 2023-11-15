@@ -21,3 +21,10 @@ INSERT INTO payment_methods (description) VALUES ('Dinheiro');
 
 INSERT INTO permissions (name, description) VALUES  ('CONSULTAR_COZINHAS', 'Permite consultar culinarias');
 INSERT INTO permissions (name, description) VALUES  ('EDITAR_COZINHAS', 'Permite editar culinarias');
+
+INSERT INTO restaurant_payment_methods (restaurant_id, payment_method_id) VALUES (1,1);
+INSERT INTO restaurant_payment_methods (restaurant_id, payment_method_id) VALUES (1,2);
+INSERT INTO restaurant_payment_methods (restaurant_id, payment_method_id) VALUES (1,3);
+INSERT INTO restaurant_payment_methods (restaurant_id, payment_method_id) VALUES (2,3);
+INSERT INTO restaurant_payment_methods (restaurant_id, payment_method_id) VALUES (3,2);
+INSERT INTO restaurant_payment_methods (restaurant_id, payment_method_id) VALUES (3,3);

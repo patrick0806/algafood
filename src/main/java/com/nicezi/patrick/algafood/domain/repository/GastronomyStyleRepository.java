@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface GastronomyStyleRepository extends JpaRepository<GastronomyStyle, Long> {
+public interface GastronomyStyleRepository extends CustomJpaRepository<GastronomyStyle, Long> {
     List<GastronomyStyle> findAllByNameContaining(String name);
 
     Optional<GastronomyStyle> findByName(String name);

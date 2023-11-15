@@ -2,6 +2,7 @@ package com.nicezi.patrick.algafood.domain.repository;
 
 import com.nicezi.patrick.algafood.domain.model.Restaurant;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -9,7 +10,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-public interface RestaurantRepository extends JpaRepository<Restaurant, Long>, RestaurantRepositoryQuery {
+public interface RestaurantRepository
+        extends JpaRepository<Restaurant, Long>, RestaurantRepositoryQuery, JpaSpecificationExecutor<Restaurant> {
     List<Restaurant> findByDeliveryTaxBetween(BigDecimal initialTax, BigDecimal finalTax);
 
     @Query("from Restaurant where name like %:name% and gastronomyStyle.id = :gastronomyStyleId")

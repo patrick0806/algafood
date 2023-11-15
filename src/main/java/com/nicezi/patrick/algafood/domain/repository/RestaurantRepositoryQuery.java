@@ -6,5 +6,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface RestaurantRepositoryQuery {
-    public List<Restaurant> find(String name, BigDecimal initialTax, BigDecimal finalTax);
+    List<Restaurant> find(String name, BigDecimal initialTax, BigDecimal finalTax);
+
+    List<Restaurant> findWithFreeDeliveryTax(String name);
 }

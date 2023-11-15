@@ -1,28 +1,33 @@
 package com.nicezi.patrick.algafood.infra.repository;
 
 import com.nicezi.patrick.algafood.domain.model.Restaurant;
+import com.nicezi.patrick.algafood.domain.repository.RestaurantRepository;
 import com.nicezi.patrick.algafood.domain.repository.RestaurantRepositoryQuery;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+
+import static com.nicezi.patrick.algafood.infra.repository.spec.RestaurantSpecs.withFreeDeliveryTax;
+import static com.nicezi.patrick.algafood.infra.repository.spec.RestaurantSpecs.withSimilarName;
 
 @Repository
 public class RestaurantRepositoryImpl implements RestaurantRepositoryQuery {
     @PersistenceContext
     private EntityManager manager;
+
+    @Autowired @Lazy
+    private RestaurantRepository restaurantRepository;
 
     public List<Restaurant> find(String name, BigDecimal initialTax, BigDecimal finalTax){
         CriteriaBuilder queryBuilder = manager.getCriteriaBuilder();
@@ -71,5 +76,10 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryQuery {
         parameters.forEach(query::setParameter);
 
         return  query.getResultList();*/
+    }
+
+    @Override
+    public List<Restaurant> findWithFreeDeliveryTax(String name) {
+        return this.restaurantRepository.findAll(withFreeDeliveryTax().and(withSimilarName(name)));
     }
 }

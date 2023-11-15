@@ -2,9 +2,9 @@ package com.nicezi.patrick.algafood.domain.service;
 
 import com.nicezi.patrick.algafood.domain.exception.EntityInUseException;
 import com.nicezi.patrick.algafood.domain.exception.EntityNotFoundException;
-import com.nicezi.patrick.algafood.domain.model.KitchenCategory;
+import com.nicezi.patrick.algafood.domain.model.GastronomyStyle;
 import com.nicezi.patrick.algafood.domain.model.Restaurant;
-import com.nicezi.patrick.algafood.domain.repository.KitchenCategoryRepository;
+import com.nicezi.patrick.algafood.domain.repository.GastronomyStyleRepository;
 import com.nicezi.patrick.algafood.domain.repository.RestaurantRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -15,12 +15,12 @@ import java.util.List;
 @Service
 public class RestaurantService {
 
-    final private KitchenCategoryRepository kitchenCategoryRepository;
+    final private GastronomyStyleRepository gastronomyStyleRepository;
     final private RestaurantRepository restaurantRepository;
 
-    RestaurantService(RestaurantRepository restaurantRepository, KitchenCategoryRepository kitchenCategoryRepository){
+    RestaurantService(RestaurantRepository restaurantRepository, GastronomyStyleRepository gastronomyStyleRepository){
         this.restaurantRepository = restaurantRepository;
-        this.kitchenCategoryRepository = kitchenCategoryRepository;
+        this.gastronomyStyleRepository = gastronomyStyleRepository;
     }
 
     public List<Restaurant> listAll(){
@@ -40,12 +40,12 @@ public class RestaurantService {
     }
 
     public Restaurant save(Restaurant restaurant){
-        final var kitchenCategoryId = restaurant.getKitchenCategory().getId();
-        KitchenCategory kitchenCategory = this.kitchenCategoryRepository.findById(kitchenCategoryId);
+        final var gastronomyStyleId = restaurant.getGastronomyStyle().getId();
+        GastronomyStyle gastronomyStyle = this.gastronomyStyleRepository.findById(gastronomyStyleId);
 
-        if(kitchenCategory == null){
+        if(gastronomyStyle == null){
             throw  new EntityNotFoundException(
-                    String.format("Não existe cadastro de cozinha com o código %d",kitchenCategoryId)
+                    String.format("Não existe cadastro de cozinha com o código %d",gastronomyStyleId)
             );
         }
 

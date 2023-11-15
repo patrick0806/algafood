@@ -1,9 +1,9 @@
-INSERT INTO kitchen_categories (name) VALUES ('Tailandesa');
-INSERT INTO kitchen_categories (name) VALUES ('Indiana');
+INSERT INTO gastronomy_styles (name) VALUES ('Tailandesa');
+INSERT INTO gastronomy_styles (name) VALUES ('Indiana');
 
-insert into restaurants (name, delivery_tax, kitchen_category_id) values ('Thai Gourmet', 10, 1);
-insert into restaurants (name, delivery_tax, kitchen_category_id) values ('Thai Delivery', 9.50, 1);
-insert into restaurants (name, delivery_tax, kitchen_category_id) values ('Tuk Tuk Comida Indiana', 15, 2);
+insert into restaurants (name, delivery_tax, gastronomy_style_id) values ('Thai Gourmet', 10, 1);
+insert into restaurants (name, delivery_tax, gastronomy_style_id) values ('Thai Delivery', 9.50, 1);
+insert into restaurants (name, delivery_tax, gastronomy_style_id) values ('Tuk Tuk Comida Indiana', 15, 2);
 
 INSERT INTO states (name) VALUES ('Minas Gerais');
 INSERT INTO states (name) VALUES ('São Paulo');

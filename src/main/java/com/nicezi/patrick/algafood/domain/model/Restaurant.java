@@ -27,5 +27,5 @@ public class Restaurant {
     private BigDecimal deliveryTax;
 
     @ManyToOne
-    private KitchenCategory kitchenCategory;
+    private GastronomyStyle gastronomyStyle;
 }

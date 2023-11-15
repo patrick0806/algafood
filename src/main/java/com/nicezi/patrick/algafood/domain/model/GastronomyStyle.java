@@ -10,8 +10,8 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "kitchen_categories")
-public class KitchenCategory {
+@Table(name = "gastronomy_styles")
+public class GastronomyStyle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

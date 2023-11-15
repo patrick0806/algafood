@@ -1,7 +1,7 @@
 package com.nicezi.patrick.algafood.infra.repository;
 
 
-import com.nicezi.patrick.algafood.domain.model.KitchenCategory;
+import com.nicezi.patrick.algafood.domain.model.GastronomyStyle;
 import com.nicezi.patrick.algafood.domain.model.Restaurant;
 import com.nicezi.patrick.algafood.domain.repository.RestaurantRepository;
 import jakarta.persistence.EntityManager;
@@ -39,7 +39,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
     @Override
     @Transactional
     public void remove(Long id) {
-        final var manegedEntity = manager.find(KitchenCategory.class,id);
+        final var manegedEntity = manager.find(GastronomyStyle.class,id);
 
         if(manegedEntity == null){
             throw new EmptyResultDataAccessException(1);

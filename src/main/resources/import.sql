@@ -1,16 +1,3 @@
-INSERT INTO gastronomy_styles (name) VALUES ('Tailandesa');
-INSERT INTO gastronomy_styles (name) VALUES ('Indiana');
-INSERT INTO gastronomy_styles (name) VALUES ('Argentina');
-INSERT INTO gastronomy_styles (name) VALUES ('Brasileira');
-
-
-insert into restaurants (name, delivery_tax, gastronomy_style_id) values ('Thai Gourmet', 10, 1);
-insert into restaurants (name, delivery_tax, gastronomy_style_id) values ('Thai Delivery', 9.50, 1);
-insert into restaurants (name, delivery_tax, gastronomy_style_id) values ('Tuk Tuk Comida Indiana', 15, 2);
-insert into restaurants (name, delivery_tax, gastronomy_style_id) values ('Java Steakhouse', 12, 3);
-insert into restaurants (name, delivery_tax, gastronomy_style_id) values ('Lanchonete do Tio Sam', 11, 4);
-insert into restaurants (name, delivery_tax, gastronomy_style_id) values ('Bar da Maria', 4, 4);
-
 INSERT INTO states (name) VALUES ('Minas Gerais');
 INSERT INTO states (name) VALUES ('São Paulo');
 INSERT INTO states (name) VALUES ('Ceará');
@@ -20,6 +7,25 @@ INSERT INTO cities (name, state_id) VALUES ("Belo Horizonte", 1);
 INSERT INTO cities (name, state_id) VALUES ("São Paulo", 2);
 INSERT INTO cities (name, state_id) VALUES ("Campinas", 2);
 INSERT INTO cities (name, state_id) VALUES ("Fortaleza", 3);
+
+
+INSERT INTO gastronomy_styles (name) VALUES ('Tailandesa');
+INSERT INTO gastronomy_styles (name) VALUES ('Indiana');
+INSERT INTO gastronomy_styles (name) VALUES ('Argentina');
+INSERT INTO gastronomy_styles (name) VALUES ('Brasileira');
+
+INSERT INTO restaurants (name, delivery_tax, gastronomy_style_id, creation_date, update_date, zip_code, street, number, complement, neighborhood, city_id)
+    VALUES ( 'Thai Gourmet', 10, 1, NOW(), NOW(), '13875-286', 'Sebastião Camargo', '69', NULL, 'Jardim Crepusculo', 1);
+INSERT INTO restaurants (name, delivery_tax, gastronomy_style_id, creation_date, update_date, zip_code, street, number, complement, neighborhood, city_id)
+     VALUES ( 'Thai Delivery', 9.50, 1, NOW(), NOW(), '13875-286', 'Sebastião Camargo', '70', NULL, 'Jardim Crepusculo', 1);
+INSERT INTO restaurants (name, delivery_tax, gastronomy_style_id, creation_date, update_date, zip_code, street, number, complement, neighborhood, city_id)
+     VALUES ( 'Tuk Tuk Comida indiana', 15, 2, NOW(), NOW(), '13875-286', 'Alfeu Fiorim', '71', NULL, 'Jardim Crepusculo', 1);
+INSERT INTO restaurants (name, delivery_tax, gastronomy_style_id, creation_date, update_date, zip_code, street, number, complement, neighborhood, city_id)
+     VALUES ( 'Java Steakhouse', 12, 3, NOW(), NOW(), '13875-286', 'Alfeu Fiorim', '72', NULL, 'Jardim Crepusculo', 1);
+INSERT INTO restaurants (name, delivery_tax, gastronomy_style_id, creation_date, update_date, zip_code, street, number, complement, neighborhood, city_id)
+     VALUES ('Lanchonete do Tio Sam', 11, 4, NOW(), NOW(), '13875-286', 'Alfeu Fiorim', '72', NULL, 'Jardim Crepusculo', 1);
+INSERT INTO restaurants (name, delivery_tax, gastronomy_style_id, creation_date, update_date, zip_code, street, number, complement, neighborhood, city_id)
+     VALUES ('Bar da Maria', 4, 4, NOW(), NOW(), '13875-286', 'Alfeu Fiorim', '72', NULL, 'Jardim Crepusculo', 1);
 
 INSERT INTO payment_methods (description) VALUES ('Cartão de crédito');
 INSERT INTO payment_methods (description) VALUES ('Cartão de Débito');
@@ -47,12 +53,3 @@ INSERT INTO products (name, description, price, active, restaurant_id) VALUES('B
 INSERT INTO products (name, description, price, active, restaurant_id) VALUES ('T-Bone', 'Corte Saboroso', 10.00, true, 5);
 INSERT INTO products (name, description, price, active, restaurant_id) VALUES ('X-Tudo', 'Sandubão com muito queijo', 20.00, true, 6);
 INSERT INTO products (name, description, price, active, restaurant_id) VALUES('Espetinho de Cupim', 'Acompanha Farinha, mandioca e vinagrete', 30.00, true, 6);
-
-UPDATE restaurants
-SET
-  city_id = 1,
-  complement = NULL,
-  neighborhood = 'Jardim Crepusculo',
-  number = '69',
-  street = 'Rua Sebastião Camargo',
-  zip_code = '13875-286';

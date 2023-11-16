@@ -64,7 +64,8 @@ public class RestaurantController {
        try{
            var currentRestaurant = this.restaurantService.findById(restaurantId);
 
-           BeanUtils.copyProperties( restaurant, currentRestaurant, "id","paymentMethods","address","creation_date");
+           BeanUtils.copyProperties( restaurant, currentRestaurant,
+                   "id","paymentMethods","address","creation_date","products");
            currentRestaurant = this.restaurantService.save(currentRestaurant);
            return ResponseEntity.ok(currentRestaurant);
        }catch (EntityNotFoundException ex){

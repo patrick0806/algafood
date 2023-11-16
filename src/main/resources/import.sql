@@ -1,9 +1,15 @@
 INSERT INTO gastronomy_styles (name) VALUES ('Tailandesa');
 INSERT INTO gastronomy_styles (name) VALUES ('Indiana');
+INSERT INTO gastronomy_styles (name) VALUES ('Argentina');
+INSERT INTO gastronomy_styles (name) VALUES ('Brasileira');
 
-insert into restaurants (name, delivery_tax, gastronomy_style_id, creation_date, update_data) values ('Thai Gourmet', 10, 1);
+
+insert into restaurants (name, delivery_tax, gastronomy_style_id) values ('Thai Gourmet', 10, 1);
 insert into restaurants (name, delivery_tax, gastronomy_style_id) values ('Thai Delivery', 9.50, 1);
 insert into restaurants (name, delivery_tax, gastronomy_style_id) values ('Tuk Tuk Comida Indiana', 15, 2);
+insert into restaurants (name, delivery_tax, gastronomy_style_id) values ('Java Steakhouse', 12, 3);
+insert into restaurants (name, delivery_tax, gastronomy_style_id) values ('Lanchonete do Tio Sam', 11, 4);
+insert into restaurants (name, delivery_tax, gastronomy_style_id) values ('Bar da Maria', 4, 4);
 
 INSERT INTO states (name) VALUES ('Minas Gerais');
 INSERT INTO states (name) VALUES ('São Paulo');
@@ -28,6 +34,19 @@ INSERT INTO restaurant_payment_methods (restaurant_id, payment_method_id) VALUES
 INSERT INTO restaurant_payment_methods (restaurant_id, payment_method_id) VALUES (2,3);
 INSERT INTO restaurant_payment_methods (restaurant_id, payment_method_id) VALUES (3,2);
 INSERT INTO restaurant_payment_methods (restaurant_id, payment_method_id) VALUES (3,3);
+INSERT INTO restaurant_payment_methods (restaurant_id, payment_method_id) VALUES (4,1);
+INSERT INTO restaurant_payment_methods (restaurant_id, payment_method_id) VALUES (5,2);
+INSERT INTO restaurant_payment_methods (restaurant_id, payment_method_id) VALUES (6,3);
+
+INSERT INTO products (name, description, price, active, restaurant_id) VALUES ('Porco com Molho Agridoce', 'Deliciona carne suina ao molho especial', 10.00, true, 1);
+INSERT INTO products (name, description, price, active, restaurant_id) VALUES ('Camarão Tailandês', '16 Camarões ao moho picante', 20.00, true, 1);
+INSERT INTO products (name, description, price, active, restaurant_id) VALUES('Salada picante com carne grelhada', 'Descrição do Produto 3', 30.00, true, 1);
+INSERT INTO products (name, description, price, active, restaurant_id) VALUES ('Garlic Nann', 'Pão tradiciona Indiano com corbertura de alho', 79.90, true, 2);
+INSERT INTO products (name, description, price, active, restaurant_id) VALUES ('Murg Curry', 'Cubos de frango, preparados com molho curry', 20.00, true, 3);
+INSERT INTO products (name, description, price, active, restaurant_id) VALUES('Bife Ancho', 'Corte maciol e suculento, com dois dedos de espessura', 30.00, true, 4);
+INSERT INTO products (name, description, price, active, restaurant_id) VALUES ('T-Bone', 'Corte Saboroso', 10.00, true, 5);
+INSERT INTO products (name, description, price, active, restaurant_id) VALUES ('X-Tudo', 'Sandubão com muito queijo', 20.00, true, 6);
+INSERT INTO products (name, description, price, active, restaurant_id) VALUES('Espetinho de Cupim', 'Acompanha Farinha, mandioca e vinagrete', 30.00, true, 6);
 
 UPDATE restaurants
 SET

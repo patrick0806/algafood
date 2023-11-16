@@ -24,29 +24,26 @@ import java.util.List;
 public class GastronomyStyleController {
     final private GastronomyStyleService gastronomyStyleService;
 
-    GastronomyStyleController(GastronomyStyleService gastronomyStyleService){
+    GastronomyStyleController(GastronomyStyleService gastronomyStyleService) {
         this.gastronomyStyleService = gastronomyStyleService;
     }
 
     @GetMapping
-    public ResponseEntity<List<GastronomyStyle>> list(){
+    public ResponseEntity<List<GastronomyStyle>> list() {
         final var gastronomyStyles = this.gastronomyStyleService.listAll();
 
         return ResponseEntity.ok(gastronomyStyles);
     }
 
     @GetMapping("/{gastronomyStyleId}")
-    public ResponseEntity<GastronomyStyle> findById(@PathVariable Long gastronomyStyleId){
-       try{
-           final var gastronomyStyle = this.gastronomyStyleService.findById(gastronomyStyleId);
-           return ResponseEntity.ok(gastronomyStyle);
-       }catch(EntityNotFoundException ex){
-           return ResponseEntity.notFound().build();
-       }
+    public ResponseEntity<GastronomyStyle> findById(@PathVariable Long gastronomyStyleId) {
+        final var gastronomyStyle = this.gastronomyStyleService.findById(gastronomyStyleId);
+        return ResponseEntity.ok(gastronomyStyle);
+
     }
 
     @PostMapping
-    public ResponseEntity<GastronomyStyle> createGastronomyStyle(@RequestBody  GastronomyStyle gastronomyStyle){
+    public ResponseEntity<GastronomyStyle> createGastronomyStyle(@RequestBody GastronomyStyle gastronomyStyle) {
         final var savedGastronomyStyle = this.gastronomyStyleService.save(gastronomyStyle);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedGastronomyStyle);
@@ -55,23 +52,22 @@ public class GastronomyStyleController {
     @PutMapping("/{gastronomyStyleId}")
     public ResponseEntity<GastronomyStyle> updateGastronomyStyle(
             @PathVariable Long gastronomyStyleId,
-            @RequestBody  GastronomyStyle gastronomyStyle){
-        try{
-            final var currentGastronomyStyle = this.gastronomyStyleService.findById(gastronomyStyleId);
+            @RequestBody GastronomyStyle gastronomyStyle) {
 
-            BeanUtils.copyProperties(gastronomyStyle, currentGastronomyStyle, "id");
+        final var currentGastronomyStyle = this.gastronomyStyleService.findById(gastronomyStyleId);
 
-            final var savedGastronomyStyle = this.gastronomyStyleService.save(currentGastronomyStyle);
+        BeanUtils.copyProperties(gastronomyStyle, currentGastronomyStyle, "id");
 
-            return ResponseEntity.ok(savedGastronomyStyle);
-        }catch (EntityNotFoundException ex){
-            return ResponseEntity.notFound().build();
-        }
+        final var savedGastronomyStyle = this.gastronomyStyleService.save(currentGastronomyStyle);
+
+        return ResponseEntity.ok(savedGastronomyStyle);
+
     }
 
     @DeleteMapping("/{gastronomyStyleId}")
-    public ResponseEntity<GastronomyStyle> deleteGastronomyStyle(@PathVariable Long gastronomyStyleId){
+    public ResponseEntity<GastronomyStyle> deleteGastronomyStyle(@PathVariable Long gastronomyStyleId) {
         this.gastronomyStyleService.remove(gastronomyStyleId);
         return ResponseEntity.noContent().build();
+        //for exceptions we can use the ResponseStatusException from spring
     }
 }

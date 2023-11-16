@@ -23,60 +23,46 @@ import java.util.List;
 public class CityController {
     final private CityService cityService;
 
-    CityController(CityService cityService){
+    CityController(CityService cityService) {
         this.cityService = cityService;
     }
 
 
     @GetMapping
-    public ResponseEntity<List<City>> list(){
+    public ResponseEntity<List<City>> list() {
         final var cities = this.cityService.listAll();
         return ResponseEntity.ok(cities);
     }
 
     @GetMapping("/{cityId}")
-    public ResponseEntity<City> findById(@PathVariable Long cityId){
-        try{    final var city = this.cityService.findById(cityId);
-            return ResponseEntity.ok(city);
-        }catch(EntityNotFoundException ex){
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<City> findById(@PathVariable Long cityId) {
+        final var city = this.cityService.findById(cityId);
+        return ResponseEntity.ok(city);
+
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody City state){
-        try{
-            final var savedCity = this.cityService.save(state);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedCity);
-        }catch(EntityNotFoundException ex){
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        }
+    public ResponseEntity<?> create(@RequestBody City state) {
+
+        final var savedCity = this.cityService.save(state);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedCity);
+
     }
 
     @PutMapping("/{cityId}")
-    public ResponseEntity<?> update(@PathVariable Long cityId,@RequestBody City state){
-        try{
-            var currentCity = this.cityService.findById(cityId);
+    public ResponseEntity<?> update(@PathVariable Long cityId, @RequestBody City state) {
 
-            BeanUtils.copyProperties( state, currentCity, "id");
-            currentCity = this.cityService.save(currentCity);
-            return ResponseEntity.ok(currentCity);
-        }catch (EntityNotFoundException ex){
-            return ResponseEntity.notFound().build();
-        }
+        var currentCity = this.cityService.findById(cityId);
+
+        BeanUtils.copyProperties(state, currentCity, "id");
+        currentCity = this.cityService.save(currentCity);
+        return ResponseEntity.ok(currentCity);
+
     }
 
     @DeleteMapping("/{cityId}")
-    public ResponseEntity<City> deleteCity(@PathVariable Long cityId){
-        try{
-            this.cityService.remove(cityId);
-            return ResponseEntity.noContent().build();
-        }
-        catch (EntityNotFoundException ex){
-            return ResponseEntity.notFound().build();
-        }
-        catch (EntityInUseException ex){
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
+    public ResponseEntity<City> deleteCity(@PathVariable Long cityId) {
+        this.cityService.remove(cityId);
+        return ResponseEntity.noContent().build();
     }
 }

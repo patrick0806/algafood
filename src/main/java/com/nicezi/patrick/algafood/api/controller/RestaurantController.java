@@ -29,69 +29,53 @@ public class RestaurantController {
 
     final private RestaurantService restaurantService;
 
-    RestaurantController(RestaurantService restaurantService){
+    RestaurantController(RestaurantService restaurantService) {
         this.restaurantService = restaurantService;
     }
 
 
     @GetMapping
-    public ResponseEntity<List<Restaurant>> list(){
+    public ResponseEntity<List<Restaurant>> list() {
         final var restaurants = this.restaurantService.listAll();
         return ResponseEntity.ok(restaurants);
     }
 
     @GetMapping("/{restaurantId}")
-    public ResponseEntity<Restaurant> findById(@PathVariable Long restaurantId){
-        try{    final var restaurant = this.restaurantService.findById(restaurantId);
+    public ResponseEntity<Restaurant> findById(@PathVariable Long restaurantId) {
+        final var restaurant = this.restaurantService.findById(restaurantId);
         return ResponseEntity.ok(restaurant);
-        }catch(EntityNotFoundException ex){
-            return ResponseEntity.notFound().build();
-        }
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Restaurant restaurant){
-        try{
-            final var savedRestaurant = this.restaurantService.save(restaurant);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedRestaurant);
-        }catch(EntityNotFoundException ex){
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        }
+    public ResponseEntity<?> create(@RequestBody Restaurant restaurant) {
+
+        final var savedRestaurant = this.restaurantService.save(restaurant);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedRestaurant);
+
     }
 
     @PutMapping("/{restaurantId}")
-    public ResponseEntity<?> update(@PathVariable Long restaurantId,@RequestBody Restaurant restaurant){
-       try{
-           var currentRestaurant = this.restaurantService.findById(restaurantId);
+    public ResponseEntity<?> update(@PathVariable Long restaurantId, @RequestBody Restaurant restaurant) {
+        var currentRestaurant = this.restaurantService.findById(restaurantId);
 
-           BeanUtils.copyProperties( restaurant, currentRestaurant,
-                   "id","paymentMethods","address","creation_date","products");
-           currentRestaurant = this.restaurantService.save(currentRestaurant);
-           return ResponseEntity.ok(currentRestaurant);
-       }catch (EntityNotFoundException ex){
-           return ResponseEntity.notFound().build();
-       }
+        BeanUtils.copyProperties(restaurant, currentRestaurant,
+                "id", "paymentMethods", "address", "creation_date", "products");
+        currentRestaurant = this.restaurantService.save(currentRestaurant);
+        return ResponseEntity.ok(currentRestaurant);
+
     }
 
     @DeleteMapping("/{restaurantId}")
-    public ResponseEntity<Restaurant> deleteRestaurant(@PathVariable Long restaurantId){
-        try{
-            this.restaurantService.remove(restaurantId);
-            return ResponseEntity.noContent().build();
-        }
-        catch (EntityNotFoundException ex){
-            return ResponseEntity.notFound().build();
-        }
-        catch (EntityInUseException ex){
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
+    public ResponseEntity<Restaurant> deleteRestaurant(@PathVariable Long restaurantId) {
+        this.restaurantService.remove(restaurantId);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{restaurantId}")
-    public ResponseEntity<?> partialUpdate(@PathVariable Long restaurantId, @RequestBody Map<String, Object> filedsToUpdate){
+    public ResponseEntity<?> partialUpdate(@PathVariable Long restaurantId, @RequestBody Map<String, Object> filedsToUpdate) {
         var currentRestaurant = this.restaurantService.findById(restaurantId);
 
-        if(currentRestaurant == null){
+        if (currentRestaurant == null) {
             return ResponseEntity.notFound().build();
         }
 
@@ -102,14 +86,14 @@ public class RestaurantController {
 
     }
 
-    private void mergeFieldsInObject(Map<String,Object> fields, Restaurant restaurant){
+    private void mergeFieldsInObject(Map<String, Object> fields, Restaurant restaurant) {
         ObjectMapper objectMapper = new ObjectMapper();
         Restaurant restaruantUpdateData = objectMapper.convertValue(fields, Restaurant.class);
-        fields.forEach((fieldName, fieldValue)->{
+        fields.forEach((fieldName, fieldValue) -> {
             Field field = ReflectionUtils.findField(Restaurant.class, fieldName);
             field.setAccessible(true); // turn private variable accessible
 
-            Object newValue = ReflectionUtils.getField(field,restaruantUpdateData);
+            Object newValue = ReflectionUtils.getField(field, restaruantUpdateData);
             ReflectionUtils.setField(field, restaurant, newValue);
         });
     }

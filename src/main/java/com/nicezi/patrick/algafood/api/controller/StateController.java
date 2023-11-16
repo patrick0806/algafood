@@ -24,60 +24,45 @@ public class StateController {
 
     final private StateService stateService;
 
-    StateController(StateService stateService){
+    StateController(StateService stateService) {
         this.stateService = stateService;
     }
 
 
     @GetMapping
-    public ResponseEntity<List<State>> list(){
+    public ResponseEntity<List<State>> list() {
         final var states = this.stateService.listAll();
         return ResponseEntity.ok(states);
     }
 
     @GetMapping("/{stateId}")
-    public ResponseEntity<State> findById(@PathVariable Long stateId){
-        try{    final var state = this.stateService.findById(stateId);
-            return ResponseEntity.ok(state);
-        }catch(EntityNotFoundException ex){
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<State> findById(@PathVariable Long stateId) {
+        final var state = this.stateService.findById(stateId);
+        return ResponseEntity.ok(state);
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody State state){
-        try{
-            final var savedState = this.stateService.save(state);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedState);
-        }catch(EntityNotFoundException ex){
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        }
+    public ResponseEntity<?> create(@RequestBody State state) {
+
+        final var savedState = this.stateService.save(state);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedState);
+
     }
 
     @PutMapping("/{stateId}")
-    public ResponseEntity<?> update(@PathVariable Long stateId,@RequestBody State state){
-        try{
-            var currentState = this.stateService.findById(stateId);
+    public ResponseEntity<?> update(@PathVariable Long stateId, @RequestBody State state) {
 
-            BeanUtils.copyProperties( state, currentState, "id");
-            currentState = this.stateService.save(currentState);
-            return ResponseEntity.ok(currentState);
-        }catch (EntityNotFoundException ex){
-            return ResponseEntity.notFound().build();
-        }
+        var currentState = this.stateService.findById(stateId);
+
+        BeanUtils.copyProperties(state, currentState, "id");
+        currentState = this.stateService.save(currentState);
+        return ResponseEntity.ok(currentState);
+
     }
 
     @DeleteMapping("/{stateId}")
-    public ResponseEntity<State> deleteState(@PathVariable Long stateId){
-        try{
-            this.stateService.remove(stateId);
-            return ResponseEntity.noContent().build();
-        }
-        catch (EntityNotFoundException ex){
-            return ResponseEntity.notFound().build();
-        }
-        catch (EntityInUseException ex){
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
+    public ResponseEntity<State> deleteState(@PathVariable Long stateId) {
+        this.stateService.remove(stateId);
+        return ResponseEntity.noContent().build();
     }
 }

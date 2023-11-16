@@ -1,6 +1,7 @@
 package com.nicezi.patrick.algafood.domain.exceptionHandler;
 
 import com.nicezi.patrick.algafood.domain.exception.BusinessException;
+import com.nicezi.patrick.algafood.domain.exception.EntityInUseException;
 import com.nicezi.patrick.algafood.domain.exception.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,15 @@ public class ApiExceptionHandler {
                 .message(ex.getMessage())
                 .build();
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionResponse);
+    }
+
+    @ExceptionHandler(EntityInUseException.class)
+    public ResponseEntity<?> handleEntityInUseException(EntityInUseException ex){
+        final var exceptionResponse  = ExceptionData.builder()
+                .time(LocalDateTime.now())
+                .message(ex.getMessage())
+                .build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(exceptionResponse);
     }
 
     @ExceptionHandler(BusinessException.class)

@@ -1,5 +1,6 @@
 package com.nicezi.patrick.algafood.domain.service;
 
+import com.nicezi.patrick.algafood.domain.exception.BusinessException;
 import com.nicezi.patrick.algafood.domain.exception.EntityInUseException;
 import com.nicezi.patrick.algafood.domain.exception.EntityNotFoundException;
 import com.nicezi.patrick.algafood.domain.model.Restaurant;
@@ -38,7 +39,7 @@ public class RestaurantService {
     public Restaurant save(Restaurant restaurant){
         final var gastronomyStyleId = restaurant.getGastronomyStyle().getId();
         this.gastronomyStyleRepository.findById(gastronomyStyleId)
-                .orElseThrow(() -> new EntityNotFoundException(String
+                .orElseThrow(() -> new BusinessException(String
                                 .format("Não existe cadastro de cozinha com o código %d",gastronomyStyleId)));
 
         return this.restaurantRepository.save(restaurant);

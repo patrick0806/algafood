@@ -1,5 +1,6 @@
 package com.nicezi.patrick.algafood.domain.service;
 
+import com.nicezi.patrick.algafood.domain.exception.BusinessException;
 import com.nicezi.patrick.algafood.domain.exception.EntityInUseException;
 import com.nicezi.patrick.algafood.domain.exception.EntityNotFoundException;
 import com.nicezi.patrick.algafood.domain.model.City;
@@ -37,8 +38,8 @@ public class CityService {
     public City save(City city){
         final var stateId = city.getState().getId();
         this.stateRepository.findById(stateId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                String.format("Não existe um cadastro de cidade com o código %d", stateId)));
+                .orElseThrow(() -> new BusinessException(
+                String.format("Não existe um cadastro de estado com o código %d", stateId)));
 
         return this.cityRepository.save(city);
     }

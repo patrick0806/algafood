@@ -71,15 +71,7 @@ public class GastronomyStyleController {
 
     @DeleteMapping("/{gastronomyStyleId}")
     public ResponseEntity<GastronomyStyle> deleteGastronomyStyle(@PathVariable Long gastronomyStyleId){
-        try{
-            this.gastronomyStyleService.remove(gastronomyStyleId);
-            return ResponseEntity.noContent().build();
-        }
-        catch (EntityNotFoundException ex){
-            return ResponseEntity.notFound().build();
-        }
-        catch (EntityInUseException ex){
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
+        this.gastronomyStyleService.remove(gastronomyStyleId);
+        return ResponseEntity.noContent().build();
     }
 }

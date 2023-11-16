@@ -35,12 +35,10 @@ public class GastronomyStyleService {
 
     public void remove(Long id){
         try{
-            this.gastronomyStyleRepository.deleteById(id);
-        }
-        catch (EmptyResultDataAccessException ex){
-            throw new EntityNotFoundException(
-                    String.format("Não existe um cadastro de categoria de cozinha com o código %d", id)
-            );
+            final var gastronomyStyle = this.gastronomyStyleRepository.findById(id).orElseThrow(
+                    () -> new EntityNotFoundException(
+                            String.format("Não existe um cadastro de categoria de cozinha com o código %d", id)));
+            this.gastronomyStyleRepository.delete(gastronomyStyle);
         }
         catch (DataIntegrityViolationException ex){
             throw new EntityInUseException(

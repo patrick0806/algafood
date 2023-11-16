@@ -1,6 +1,8 @@
 package com.nicezi.patrick.algafood.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,8 +14,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,4 +46,16 @@ public class Restaurant {
             inverseJoinColumns = @JoinColumn(name="payment_method_id")
     )
     private List<PaymentMethod> paymentMethods = new ArrayList<>();
+
+    @JsonIgnore
+    @Embedded
+    private Address address;
+
+    @JsonIgnore
+    @CreationTimestamp
+    private LocalDateTime creationDate;
+
+    @JsonIgnore
+    @UpdateTimestamp
+    private LocalDateTime updateDate;
 }

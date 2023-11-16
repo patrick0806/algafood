@@ -1,7 +1,7 @@
 INSERT INTO gastronomy_styles (name) VALUES ('Tailandesa');
 INSERT INTO gastronomy_styles (name) VALUES ('Indiana');
 
-insert into restaurants (name, delivery_tax, gastronomy_style_id) values ('Thai Gourmet', 10, 1);
+insert into restaurants (name, delivery_tax, gastronomy_style_id, creation_date, update_data) values ('Thai Gourmet', 10, 1);
 insert into restaurants (name, delivery_tax, gastronomy_style_id) values ('Thai Delivery', 9.50, 1);
 insert into restaurants (name, delivery_tax, gastronomy_style_id) values ('Tuk Tuk Comida Indiana', 15, 2);
 
@@ -28,3 +28,12 @@ INSERT INTO restaurant_payment_methods (restaurant_id, payment_method_id) VALUES
 INSERT INTO restaurant_payment_methods (restaurant_id, payment_method_id) VALUES (2,3);
 INSERT INTO restaurant_payment_methods (restaurant_id, payment_method_id) VALUES (3,2);
 INSERT INTO restaurant_payment_methods (restaurant_id, payment_method_id) VALUES (3,3);
+
+UPDATE restaurants
+SET
+  city_id = 1,
+  complement = NULL,
+  neighborhood = 'Jardim Crepusculo',
+  number = '69',
+  street = 'Rua Sebastião Camargo',
+  zip_code = '13875-286';

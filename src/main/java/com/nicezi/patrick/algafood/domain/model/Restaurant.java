@@ -1,7 +1,8 @@
 package com.nicezi.patrick.algafood.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.nicezi.patrick.algafood.Groups;
+import com.nicezi.patrick.algafood.config.validation.DeliveryTax;
+import com.nicezi.patrick.algafood.config.validation.Groups;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -44,8 +45,9 @@ public class Restaurant {
     private String name;
 
     //@DecimalMin("0")
-    @NotNull
-    @PositiveOrZero
+    //@NotNull
+    //@PositiveOrZero
+    @DeliveryTax//annotation make with composition
     @Column(name = "delivery_tax")
     private BigDecimal deliveryTax;
 

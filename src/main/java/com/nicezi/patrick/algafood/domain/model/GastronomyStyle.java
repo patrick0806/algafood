@@ -1,7 +1,7 @@
 package com.nicezi.patrick.algafood.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.nicezi.patrick.algafood.Groups;
+import com.nicezi.patrick.algafood.config.validation.Groups;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

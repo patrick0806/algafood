@@ -1,6 +1,6 @@
 package com.nicezi.patrick.algafood.domain.model;
 
-import com.nicezi.patrick.algafood.Groups;
+import com.nicezi.patrick.algafood.config.validation.Groups;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

@@ -1,4 +1,4 @@
-package com.nicezi.patrick.algafood;
+package com.nicezi.patrick.algafood.config.validation;
 
 public interface Groups {
     public interface GastronomyStyleId{}

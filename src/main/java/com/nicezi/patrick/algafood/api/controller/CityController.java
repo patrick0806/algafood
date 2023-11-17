@@ -6,6 +6,7 @@ import com.nicezi.patrick.algafood.domain.exception.EntityNotFoundException;
 import com.nicezi.patrick.algafood.domain.exceptionHandler.ExceptionData;
 import com.nicezi.patrick.algafood.domain.model.City;
 import com.nicezi.patrick.algafood.domain.service.CityService;
+import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +47,7 @@ public class CityController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody City state) {
+    public ResponseEntity<?> create(@RequestBody @Valid City state) {
 
         final var savedCity = this.cityService.save(state);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCity);
@@ -54,7 +55,7 @@ public class CityController {
     }
 
     @PutMapping("/{cityId}")
-    public ResponseEntity<?> update(@PathVariable Long cityId, @RequestBody City state) {
+    public ResponseEntity<?> update(@PathVariable Long cityId, @RequestBody @Valid City state) {
 
         var currentCity = this.cityService.findById(cityId);
 

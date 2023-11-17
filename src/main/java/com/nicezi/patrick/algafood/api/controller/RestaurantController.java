@@ -2,11 +2,13 @@ package com.nicezi.patrick.algafood.api.controller;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nicezi.patrick.algafood.Groups;
 import com.nicezi.patrick.algafood.domain.exception.EntityInUseException;
 import com.nicezi.patrick.algafood.domain.exception.EntityNotFoundException;
 import com.nicezi.patrick.algafood.domain.model.Restaurant;
 import com.nicezi.patrick.algafood.domain.service.RestaurantService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -52,7 +55,7 @@ public class RestaurantController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Restaurant restaurant) {
+    public ResponseEntity<?> create(@RequestBody @Valid Restaurant restaurant) {
 
         final var savedRestaurant = this.restaurantService.save(restaurant);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedRestaurant);
@@ -60,7 +63,7 @@ public class RestaurantController {
     }
 
     @PutMapping("/{restaurantId}")
-    public ResponseEntity<?> update(@PathVariable Long restaurantId, @RequestBody Restaurant restaurant) {
+    public ResponseEntity<?> update(@PathVariable Long restaurantId, @RequestBody @Valid Restaurant restaurant) {
         var currentRestaurant = this.restaurantService.findById(restaurantId);
 
         BeanUtils.copyProperties(restaurant, currentRestaurant,

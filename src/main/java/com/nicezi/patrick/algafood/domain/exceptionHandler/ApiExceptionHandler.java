@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -21,6 +23,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -102,20 +105,43 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        HttpStatus httpStatus = (HttpStatus) status;
+        String userMessage = "Um ou mais parametros estão invalidos, faça o preenchimento correto e tente novamente";
+        BindingResult bindingResult = ex.getBindingResult();
+        List<ExceptionData.Field> problemFields = bindingResult.getFieldErrors()
+                .stream()
+                .map(fieldError ->
+                    ExceptionData.Field.builder()
+                        .name(fieldError.getField())
+                        .userMessage(fieldError.getDefaultMessage())
+                        .build()
+                )
+                .collect(Collectors.toList());
+
+
+        ExceptionData exceptionData = createExceptionDataResponseBuilder(httpStatus, ExceptionType.INVALID_BODY,ex.getMessage())
+                .userMessage(userMessage)
+                .fields(problemFields)
+                .build();
+        return handleExceptionInternal(ex,exceptionData,headers,httpStatus,request);
+    }
+
+    @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
        if(body ==null){
            body = ExceptionData.builder()
                    .title("Ocorreu um erro interno inesperado no sistema.")
                    .status(statusCode.value())
                    .detail(ex.getMessage())
-                   .friendlyMessage(FRIENDLY_MSG_GENERIC_ERROR)
+                   .userMessage(FRIENDLY_MSG_GENERIC_ERROR)
                    .build();
        }else if(body instanceof String){
            body = ExceptionData.builder()
                    .title("Ocorreu um erro interno inesperado no sistema.")
                    .status(statusCode.value())
                    .detail(ex.getMessage())
-                   .friendlyMessage(FRIENDLY_MSG_GENERIC_ERROR)
+                   .userMessage(FRIENDLY_MSG_GENERIC_ERROR)
                    .build();
        }
 
@@ -151,7 +177,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 status,
                 ExceptionType.INVALID_BODY,
                 detail)
-                .friendlyMessage(FRIENDLY_MSG_GENERIC_ERROR)
+                .userMessage(FRIENDLY_MSG_GENERIC_ERROR)
                 .build();
         return handleExceptionInternal(ex, exceptionBodyData, new HttpHeaders(),status, request);
     }
@@ -166,7 +192,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 + "Corrija ou remova essa propriedade e tente novamente.", path);
 
         ExceptionData exceptionData = createExceptionDataResponseBuilder(HttpStatus.BAD_REQUEST, ExceptionType.INVALID_BODY, detail)
-                .friendlyMessage(FRIENDLY_MSG_GENERIC_ERROR)
+                .userMessage(FRIENDLY_MSG_GENERIC_ERROR)
                 .build();
 
         return handleExceptionInternal(ex, exceptionData, headers, HttpStatus.BAD_REQUEST, request);
@@ -181,7 +207,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 ex.getName(), ex.getValue(), ex.getRequiredType().getSimpleName());
 
         ExceptionData problem = createExceptionDataResponseBuilder(status, ExceptionType.INVALID_PARAM, detail)
-                .friendlyMessage(FRIENDLY_MSG_GENERIC_ERROR)
+                .userMessage(FRIENDLY_MSG_GENERIC_ERROR)
                 .build();
 
         return handleExceptionInternal(ex, problem, headers, status, request);

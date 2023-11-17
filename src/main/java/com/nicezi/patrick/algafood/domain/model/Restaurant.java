@@ -1,6 +1,7 @@
 package com.nicezi.patrick.algafood.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.nicezi.patrick.algafood.Groups;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -13,6 +14,12 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.groups.ConvertGroup;
+import jakarta.validation.groups.Default;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
@@ -32,11 +39,18 @@ public class Restaurant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank
     private String name;
 
+    //@DecimalMin("0")
+    @PositiveOrZero
     @Column(name = "delivery_tax")
     private BigDecimal deliveryTax;
 
+    @Valid// to enable deep validation(validate inner objects)
+    @ConvertGroup(from = Default.class, to = Groups.GastronomyStyleId.class)
+    @NotNull
     @ManyToOne
     private GastronomyStyle gastronomyStyle;
 
@@ -51,7 +65,7 @@ public class Restaurant {
     @OneToMany(mappedBy = "restaurant")
     private List<Product> products;
 
-    @JsonIgnore
+    //@JsonIgnore
     @Embedded
     private Address address;
 

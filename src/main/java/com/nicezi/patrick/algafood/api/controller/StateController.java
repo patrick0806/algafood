@@ -4,6 +4,7 @@ import com.nicezi.patrick.algafood.domain.exception.EntityInUseException;
 import com.nicezi.patrick.algafood.domain.exception.EntityNotFoundException;
 import com.nicezi.patrick.algafood.domain.model.State;
 import com.nicezi.patrick.algafood.domain.service.StateService;
+import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +43,7 @@ public class StateController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody State state) {
+    public ResponseEntity<?> create(@RequestBody @Valid State state) {
 
         final var savedState = this.stateService.save(state);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedState);
@@ -50,7 +51,7 @@ public class StateController {
     }
 
     @PutMapping("/{stateId}")
-    public ResponseEntity<?> update(@PathVariable Long stateId, @RequestBody State state) {
+    public ResponseEntity<?> update(@PathVariable Long stateId, @RequestBody @Valid State state) {
 
         var currentState = this.stateService.findById(stateId);
 

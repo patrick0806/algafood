@@ -5,6 +5,7 @@ import com.nicezi.patrick.algafood.domain.exception.EntityInUseException;
 import com.nicezi.patrick.algafood.domain.exception.EntityNotFoundException;
 import com.nicezi.patrick.algafood.domain.model.GastronomyStyle;
 import com.nicezi.patrick.algafood.domain.service.GastronomyStyleService;
+import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +44,7 @@ public class GastronomyStyleController {
     }
 
     @PostMapping
-    public ResponseEntity<GastronomyStyle> createGastronomyStyle(@RequestBody GastronomyStyle gastronomyStyle) {
+    public ResponseEntity<GastronomyStyle> createGastronomyStyle(@RequestBody @Valid GastronomyStyle gastronomyStyle) {
         final var savedGastronomyStyle = this.gastronomyStyleService.save(gastronomyStyle);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedGastronomyStyle);
@@ -52,7 +53,7 @@ public class GastronomyStyleController {
     @PutMapping("/{gastronomyStyleId}")
     public ResponseEntity<GastronomyStyle> updateGastronomyStyle(
             @PathVariable Long gastronomyStyleId,
-            @RequestBody GastronomyStyle gastronomyStyle) {
+            @RequestBody @Valid GastronomyStyle gastronomyStyle) {
 
         final var currentGastronomyStyle = this.gastronomyStyleService.findById(gastronomyStyleId);
 

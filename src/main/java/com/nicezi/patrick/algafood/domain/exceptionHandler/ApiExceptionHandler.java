@@ -26,7 +26,9 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice//handle all controller exceptions
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
-
+    public static final String FRIENDLY_MSG_GENERIC_ERROR = "Ocorreu um erro interno inesperado no sistema. "
+            + "Tente novamente e se o problema persistir, entre em contato "
+            + "com o administrador do sistema.";
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         Throwable rootCause = ExceptionUtils.getRootCause(ex);
@@ -86,9 +88,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleUncaught(Exception ex, WebRequest request) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         ExceptionType exceptionData = ExceptionType.INTERNAL_ERROR;
-        String detail = "Ocorreu um erro interno inesperado no sistema. "
-                + "Tente novamente e se o problema persistir, entre em contato "
-                + "com o administrador do sistema.";
+        String detail = FRIENDLY_MSG_GENERIC_ERROR;
 
         // Importante colocar o printStackTrace (pelo menos por enquanto, que não estamos
         // fazendo logging) para mostrar a stacktrace no console
@@ -105,13 +105,13 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
        if(body ==null){
            body = ExceptionData.builder()
-                   .title("Houve um erro inesperado")
+                   .title("Ocorreu um erro interno inesperado no sistema.")
                    .status(statusCode.value())
                    .detail(ex.getMessage())
                    .build();
        }else if(body instanceof String){
            body = ExceptionData.builder()
-                   .title("Houve um erro inesperado")
+                   .title("Ocorreu um erro interno inesperado no sistema.")
                    .status(statusCode.value())
                    .detail(ex.getMessage())
                    .build();
@@ -148,7 +148,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         ExceptionData exceptionBodyData = createExceptionDataResponseBuilder(
                 status,
                 ExceptionType.INVALID_BODY,
-                detail).build();
+                detail)
+                .friendlyMessage(FRIENDLY_MSG_GENERIC_ERROR)
+                .build();
         return handleExceptionInternal(ex, exceptionBodyData, new HttpHeaders(),status, request);
     }
 
@@ -161,7 +163,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         String detail = String.format("A propriedade '%s' não existe. "
                 + "Corrija ou remova essa propriedade e tente novamente.", path);
 
-        ExceptionData exceptionData = createExceptionDataResponseBuilder(HttpStatus.BAD_REQUEST, ExceptionType.INVALID_BODY, detail).build();
+        ExceptionData exceptionData = createExceptionDataResponseBuilder(HttpStatus.BAD_REQUEST, ExceptionType.INVALID_BODY, detail)
+                .friendlyMessage(FRIENDLY_MSG_GENERIC_ERROR)
+                .build();
 
         return handleExceptionInternal(ex, exceptionData, headers, HttpStatus.BAD_REQUEST, request);
     }
@@ -174,7 +178,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                         + "que é de um tipo inválido. Corrija e informe um valor compatível com o tipo %s.",
                 ex.getName(), ex.getValue(), ex.getRequiredType().getSimpleName());
 
-        ExceptionData problem = createExceptionDataResponseBuilder(status, ExceptionType.INVALID_PARAM, detail).build();
+        ExceptionData problem = createExceptionDataResponseBuilder(status, ExceptionType.INVALID_PARAM, detail)
+                .friendlyMessage(FRIENDLY_MSG_GENERIC_ERROR)
+                .build();
 
         return handleExceptionInternal(ex, problem, headers, status, request);
     }

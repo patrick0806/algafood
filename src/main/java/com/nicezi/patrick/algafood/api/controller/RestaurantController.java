@@ -2,6 +2,8 @@ package com.nicezi.patrick.algafood.api.controller;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nicezi.patrick.algafood.domain.exception.BusinessException;
+import com.nicezi.patrick.algafood.domain.exception.ValidationException;
 import com.nicezi.patrick.algafood.domain.model.Restaurant;
 import com.nicezi.patrick.algafood.domain.service.RestaurantService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -32,9 +36,11 @@ import java.util.Map;
 public class RestaurantController {
 
     final private RestaurantService restaurantService;
+    final private SmartValidator validator;
 
-    RestaurantController(RestaurantService restaurantService) {
+    RestaurantController(RestaurantService restaurantService, SmartValidator validator) {
         this.restaurantService = restaurantService;
+        this.validator = validator;
     }
 
 
@@ -84,7 +90,7 @@ public class RestaurantController {
         }
 
         this.mergeFieldsInObject(filedsToUpdate, currentRestaurant, request);
-
+        validate(currentRestaurant, "restaurant");
         currentRestaurant = this.restaurantService.save(currentRestaurant);
         return ResponseEntity.ok(currentRestaurant);
 
@@ -107,6 +113,15 @@ public class RestaurantController {
         }catch (IllegalArgumentException ex){
             Throwable rootCause = ExceptionUtils.getRootCause(ex);
             throw new HttpMessageNotReadableException(ex.getMessage(),rootCause, serverHttpRequest);
+        }
+    }
+
+    private void validate(Restaurant restaurant,String objectName){
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(restaurant,objectName);
+        validator.validate(restaurant, bindingResult);
+
+        if(bindingResult.hasErrors()){
+            throw new ValidationException(bindingResult);
         }
     }
 }

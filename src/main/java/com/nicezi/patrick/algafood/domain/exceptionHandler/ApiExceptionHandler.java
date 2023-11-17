@@ -1,8 +1,11 @@
 package com.nicezi.patrick.algafood.domain.exceptionHandler;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.nicezi.patrick.algafood.domain.exception.BusinessException;
 import com.nicezi.patrick.algafood.domain.exception.EntityInUseException;
 import com.nicezi.patrick.algafood.domain.exception.EntityNotFoundException;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -14,13 +17,17 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 @ControllerAdvice//handle all controller exceptions
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-
+        Throwable rootCause = ExceptionUtils.getRootCause(ex);
+        if(rootCause instanceof InvalidFormatException){
+            return handleInvalidFormatException((InvalidFormatException) rootCause, headers, request);
+        }
         ExceptionData exceptionBodyData = createExceptionDataResponseBuilder(
                 (HttpStatus) status,
                 ExceptionType.INVALID_BODY,
@@ -62,7 +69,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 status,
                 ExceptionType.BUSINESS_EXCEPTION,
                 ex.getMessage()).build();
-        return  handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(),status, request);
+        return  handleExceptionInternal(ex, exceptionBodyData, new HttpHeaders(),status, request);
     }
 
     @Override
@@ -90,5 +97,21 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .type(type.getUri())
                 .title(type.getTitle())
                 .detail(detail);
+    }
+
+    private ResponseEntity<Object> handleInvalidFormatException(InvalidFormatException ex, HttpHeaders headers, WebRequest request){
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        String path = ex.getPath().stream()
+                .map(reference -> reference.getFieldName())
+                .collect(Collectors.joining("."));
+        String detail = String.format("A propriedade '%s' recebeu o valor '%s'" +
+                "que é um tipo inválido. Corrija e infomre um valor compativel com o tipo '%s'.",
+                path,ex.getValue(),ex.getTargetType().getSimpleName());
+
+        ExceptionData exceptionBodyData = createExceptionDataResponseBuilder(
+                status,
+                ExceptionType.INVALID_BODY,
+                detail).build();
+        return handleExceptionInternal(ex, exceptionBodyData, new HttpHeaders(),status, request);
     }
 }

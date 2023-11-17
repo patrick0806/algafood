@@ -108,12 +108,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                    .title("Ocorreu um erro interno inesperado no sistema.")
                    .status(statusCode.value())
                    .detail(ex.getMessage())
+                   .friendlyMessage(FRIENDLY_MSG_GENERIC_ERROR)
                    .build();
        }else if(body instanceof String){
            body = ExceptionData.builder()
                    .title("Ocorreu um erro interno inesperado no sistema.")
                    .status(statusCode.value())
                    .detail(ex.getMessage())
+                   .friendlyMessage(FRIENDLY_MSG_GENERIC_ERROR)
                    .build();
        }
 
@@ -190,6 +192,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .status(status.value())
                 .type(type.getUri())
                 .title(type.getTitle())
+                .timestamp(LocalDateTime.now())
                 .detail(detail);
     }
 

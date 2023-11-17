@@ -82,6 +82,25 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return  handleExceptionInternal(ex, exceptionBodyData, new HttpHeaders(),status, request);
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleUncaught(Exception ex, WebRequest request) {
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        ExceptionType exceptionData = ExceptionType.INTERNAL_ERROR;
+        String detail = "Ocorreu um erro interno inesperado no sistema. "
+                + "Tente novamente e se o problema persistir, entre em contato "
+                + "com o administrador do sistema.";
+
+        // Importante colocar o printStackTrace (pelo menos por enquanto, que não estamos
+        // fazendo logging) para mostrar a stacktrace no console
+        // Se não fizer isso, você não vai ver a stacktrace de exceptions que seriam importantes
+        // para você durante, especialmente na fase de desenvolvimento
+        ex.printStackTrace();
+
+        ExceptionData problem = createExceptionDataResponseBuilder(status, exceptionData, detail).build();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+    }
+
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
        if(body ==null){
@@ -132,6 +151,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 detail).build();
         return handleExceptionInternal(ex, exceptionBodyData, new HttpHeaders(),status, request);
     }
+
 
     private ResponseEntity<Object> handlePropertyBindingException(PropertyBindingException ex,
                                                                   HttpHeaders headers, WebRequest request) {

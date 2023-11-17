@@ -9,7 +9,8 @@ public enum ExceptionType {
     BUSINESS_EXCEPTION("Violação de regra de negocio","/business-exception"),
     INVALID_BODY("Mensagem incompreensivel","/invlida-body"),
     INVALID_PARAM("Parâmetro inválido", "/invalid-params"),
-    ROUTE_NOT_FOUND("A rota não existe", "/route-not-found");
+    ROUTE_NOT_FOUND("A rota não existe", "/route-not-found"),
+    INTERNAL_ERROR("Erro de Sistema", "system-error");
 
     private String title;
     private String uri;

@@ -7,6 +7,7 @@ import com.nicezi.patrick.algafood.domain.exception.BusinessException;
 import com.nicezi.patrick.algafood.domain.exception.EntityInUseException;
 import com.nicezi.patrick.algafood.domain.exception.EntityNotFoundException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -15,6 +16,8 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
@@ -98,12 +101,21 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return super.handleExceptionInternal(ex, body, headers, statusCode, request);
     }
 
-    private ExceptionData.ExceptionDataBuilder createExceptionDataResponseBuilder(HttpStatus status,ExceptionType type, String detail){
-        return ExceptionData.builder()
-                .status(status.value())
-                .type(type.getUri())
-                .title(type.getTitle())
-                .detail(detail);
+    @Override
+    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        if (ex instanceof MethodArgumentTypeMismatchException) {
+            return handleMethodArgumentTypeMismatch(
+                    (MethodArgumentTypeMismatchException) ex, headers, request);
+        }
+        return super.handleTypeMismatch(ex, headers, status, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        String detail = String.format("O recurso %s, que você tentou acessar, é inexistente.",
+                ex.getRequestURL());
+        ExceptionData exceptionData = createExceptionDataResponseBuilder((HttpStatus) status, ExceptionType.ROUTE_NOT_FOUND,detail).build();
+        return super.handleExceptionInternal(ex, exceptionData, headers, status, request);
     }
 
     private ResponseEntity<Object> handleInvalidFormatException(InvalidFormatException ex, HttpHeaders headers, WebRequest request){
@@ -132,6 +144,27 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         ExceptionData exceptionData = createExceptionDataResponseBuilder(HttpStatus.BAD_REQUEST, ExceptionType.INVALID_BODY, detail).build();
 
         return handleExceptionInternal(ex, exceptionData, headers, HttpStatus.BAD_REQUEST, request);
+    }
+
+    private ResponseEntity<Object> handleMethodArgumentTypeMismatch(
+            MethodArgumentTypeMismatchException ex, HttpHeaders headers,
+           WebRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        String detail = String.format("O parâmetro de URL '%s' recebeu o valor '%s', "
+                        + "que é de um tipo inválido. Corrija e informe um valor compatível com o tipo %s.",
+                ex.getName(), ex.getValue(), ex.getRequiredType().getSimpleName());
+
+        ExceptionData problem = createExceptionDataResponseBuilder(status, ExceptionType.INVALID_PARAM, detail).build();
+
+        return handleExceptionInternal(ex, problem, headers, status, request);
+    }
+
+    private ExceptionData.ExceptionDataBuilder createExceptionDataResponseBuilder(HttpStatus status, ExceptionType type, String detail){
+        return ExceptionData.builder()
+                .status(status.value())
+                .type(type.getUri())
+                .title(type.getTitle())
+                .detail(detail);
     }
 
     private String joinPath(List<JsonMappingException.Reference> references) {

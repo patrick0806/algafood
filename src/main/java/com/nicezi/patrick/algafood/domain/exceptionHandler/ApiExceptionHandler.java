@@ -1,7 +1,8 @@
 package com.nicezi.patrick.algafood.domain.exceptionHandler;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 import com.nicezi.patrick.algafood.domain.exception.BusinessException;
 import com.nicezi.patrick.algafood.domain.exception.EntityInUseException;
 import com.nicezi.patrick.algafood.domain.exception.EntityNotFoundException;
@@ -17,6 +18,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @ControllerAdvice//handle all controller exceptions
@@ -28,6 +30,11 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         if(rootCause instanceof InvalidFormatException){
             return handleInvalidFormatException((InvalidFormatException) rootCause, headers, request);
         }
+
+        if (rootCause instanceof PropertyBindingException) {
+            return handlePropertyBindingException((PropertyBindingException) rootCause, headers, request);
+        }
+
         ExceptionData exceptionBodyData = createExceptionDataResponseBuilder(
                 (HttpStatus) status,
                 ExceptionType.INVALID_BODY,
@@ -101,9 +108,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     private ResponseEntity<Object> handleInvalidFormatException(InvalidFormatException ex, HttpHeaders headers, WebRequest request){
         HttpStatus status = HttpStatus.BAD_REQUEST;
-        String path = ex.getPath().stream()
-                .map(reference -> reference.getFieldName())
-                .collect(Collectors.joining("."));
+        String path = joinPath(ex.getPath());
+
         String detail = String.format("A propriedade '%s' recebeu o valor '%s'" +
                 "que é um tipo inválido. Corrija e infomre um valor compativel com o tipo '%s'.",
                 path,ex.getValue(),ex.getTargetType().getSimpleName());
@@ -113,5 +119,24 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 ExceptionType.INVALID_BODY,
                 detail).build();
         return handleExceptionInternal(ex, exceptionBodyData, new HttpHeaders(),status, request);
+    }
+
+    private ResponseEntity<Object> handlePropertyBindingException(PropertyBindingException ex,
+                                                                  HttpHeaders headers, WebRequest request) {
+
+        String path = joinPath(ex.getPath());
+
+        String detail = String.format("A propriedade '%s' não existe. "
+                + "Corrija ou remova essa propriedade e tente novamente.", path);
+
+        ExceptionData exceptionData = createExceptionDataResponseBuilder(HttpStatus.BAD_REQUEST, ExceptionType.INVALID_BODY, detail).build();
+
+        return handleExceptionInternal(ex, exceptionData, headers, HttpStatus.BAD_REQUEST, request);
+    }
+
+    private String joinPath(List<JsonMappingException.Reference> references) {
+        return references.stream()
+                .map(ref -> ref.getFieldName())
+                .collect(Collectors.joining("."));
     }
 }

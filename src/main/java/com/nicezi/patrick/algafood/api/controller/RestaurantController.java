@@ -1,13 +1,18 @@
 package com.nicezi.patrick.algafood.api.controller;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nicezi.patrick.algafood.domain.exception.EntityInUseException;
 import com.nicezi.patrick.algafood.domain.exception.EntityNotFoundException;
 import com.nicezi.patrick.algafood.domain.model.Restaurant;
 import com.nicezi.patrick.algafood.domain.service.RestaurantService;
+import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -72,29 +77,37 @@ public class RestaurantController {
     }
 
     @PatchMapping("/{restaurantId}")
-    public ResponseEntity<?> partialUpdate(@PathVariable Long restaurantId, @RequestBody Map<String, Object> filedsToUpdate) {
+    public ResponseEntity<?> partialUpdate(@PathVariable Long restaurantId, @RequestBody Map<String, Object> filedsToUpdate, HttpServletRequest request) {
         var currentRestaurant = this.restaurantService.findById(restaurantId);
 
         if (currentRestaurant == null) {
             return ResponseEntity.notFound().build();
         }
 
-        this.mergeFieldsInObject(filedsToUpdate, currentRestaurant);
+        this.mergeFieldsInObject(filedsToUpdate, currentRestaurant, request);
 
         currentRestaurant = this.restaurantService.save(currentRestaurant);
         return ResponseEntity.ok(currentRestaurant);
 
     }
 
-    private void mergeFieldsInObject(Map<String, Object> fields, Restaurant restaurant) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        Restaurant restaruantUpdateData = objectMapper.convertValue(fields, Restaurant.class);
-        fields.forEach((fieldName, fieldValue) -> {
-            Field field = ReflectionUtils.findField(Restaurant.class, fieldName);
-            field.setAccessible(true); // turn private variable accessible
+    private void mergeFieldsInObject(Map<String, Object> fields, Restaurant restaurant, HttpServletRequest request) {
+        ServletServerHttpRequest serverHttpRequest = new ServletServerHttpRequest(request);
+        try{
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES,true);
 
-            Object newValue = ReflectionUtils.getField(field, restaruantUpdateData);
-            ReflectionUtils.setField(field, restaurant, newValue);
-        });
+            Restaurant restaruantUpdateData = objectMapper.convertValue(fields, Restaurant.class);
+            fields.forEach((fieldName, fieldValue) -> {
+                Field field = ReflectionUtils.findField(Restaurant.class, fieldName);
+                field.setAccessible(true); // turn private variable accessible
+
+                Object newValue = ReflectionUtils.getField(field, restaruantUpdateData);
+                ReflectionUtils.setField(field, restaurant, newValue);
+            });
+        }catch (IllegalArgumentException ex){
+            Throwable rootCause = ExceptionUtils.getRootCause(ex);
+            throw new HttpMessageNotReadableException(ex.getMessage(),rootCause, serverHttpRequest);
+        }
     }
 }
